@@ -3,14 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CrazeAI - Coming Soon</title>
-    <!-- 引入极具科技感的字体 -->
+    <title>CrazeAI - Future Intelligence</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Rajdhani:wght@300&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@100;700;900&family=Inter:wght@300;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <style>
-        /* 全局重置 */
+        /* --- 基础设置 --- */
         * {
             margin: 0;
             padding: 0;
@@ -18,356 +17,687 @@
         }
 
         body {
-            background-color: #0b0c15; /* 深蓝紫色背景 */
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Exo 2', sans-serif;
             height: 100vh;
+            width: 100vw;
+            overflow: hidden;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            font-family: 'Orbitron', sans-serif;
-            overflow: hidden;
-            color: #ffffff;
             position: relative;
+            cursor: none;
         }
 
-        /* --- 背景场景层 (z-index: 0) --- */
-        .scene {
+        /* --- 背景 Canvas --- */
+        #bg-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 0;
-            overflow: hidden;
-            perspective: 1000px; /* 3D 透视 */
-            background: linear-gradient(to bottom, #020205 0%, #100b29 100%);
         }
 
-        /* 1. 星空 */
-        .stars {
+        .vignette {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 60%;
-            background-image: 
-                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)),
-                radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0,0,0,0));
-            background-repeat: repeat;
-            background-size: 200px 200px;
-            opacity: 0.6;
-            animation: twinkle 5s infinite linear;
-        }
-
-        @keyframes twinkle {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-200px); }
-        }
-
-        /* 2. 赛博星球 (合成波落日) */
-        .sun {
-            position: absolute;
-            bottom: 30%; /* 位于地平线上方 */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40vh;
-            height: 40vh;
-            border-radius: 50%;
-            background: linear-gradient(to bottom, #ff0055, #ffcc00);
-            box-shadow: 0 0 60px rgba(255, 0, 85, 0.6);
-            /* 制作横条纹遮罩效果 */
-            -webkit-mask-image: linear-gradient(to bottom, 
-                black 0%, black 50%, 
-                transparent 50%, transparent 55%, 
-                black 55%, black 60%, 
-                transparent 60%, transparent 63%, 
-                black 63%, black 68%, 
-                transparent 68%, transparent 70%, 
-                black 70%, black 100%);
-            mask-image: linear-gradient(to bottom, 
-                black 0%, black 50%, 
-                transparent 50%, transparent 55%, 
-                black 55%, black 60%, 
-                transparent 60%, transparent 63%, 
-                black 63%, black 68%, 
-                transparent 68%, transparent 70%, 
-                black 70%, black 100%);
-        }
-
-        /* 3. 远处的城市剪影 */
-        .city-silhouette {
-            position: absolute;
-            bottom: 35%; /* 放在地平线上 */
-            left: 0;
-            width: 100%;
-            height: 10vh;
-            background-repeat: repeat-x;
-            background-position: bottom;
-            background-size: 15% 100%;
-            /* 使用纯 CSS 渐变模拟高低错落的大楼 */
-            background-image: linear-gradient(to top, #000 0%, #000 80%, transparent 80%),
-                              linear-gradient(to top, #050505 0%, #050505 60%, transparent 60%),
-                              linear-gradient(to top, #020202 0%, #020202 90%, transparent 90%),
-                              linear-gradient(to top, #000 0%, #000 40%, transparent 40%);
+            height: 100%;
             z-index: 1;
-            filter: drop-shadow(0 -2px 5px rgba(0, 204, 255, 0.3));
-            opacity: 0.9;
-        }
-        
-        /* 增加第二层城市增加层次感 */
-        .city-silhouette::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: -50px;
-            width: 110%;
-            height: 80%;
-            background-repeat: repeat-x;
-            background-size: 10% 100%;
-            background-image: linear-gradient(to top, #000 0%, #000 70%, transparent 70%),
-                              linear-gradient(to top, #000 0%, #000 50%, transparent 50%);
-            opacity: 0.7;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.8) 100%);
+            pointer-events: none;
         }
 
-        /* 4. 地面网格 (赛博空间) */
-        .grid {
-            position: absolute;
-            bottom: -30%;
-            left: -50%;
-            width: 200%;
-            height: 80%;
-            background: 
-                linear-gradient(transparent 0%, rgba(0, 255, 255, 0.4) 2%, transparent 3%),
-                linear-gradient(90deg, transparent 0%, rgba(255, 0, 128, 0.3) 2%, transparent 3%);
-            background-size: 40px 40px;
-            transform: rotateX(60deg);
-            animation: gridMove 2s infinite linear;
-            box-shadow: 0 -20px 40px rgba(0,0,0,1) inset; /* 远处的渐隐 */
-            z-index: 2;
-        }
-
-        @keyframes gridMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 40px; }
-        }
-
-        /* 5. 飞船 */
-        .spaceship {
-            position: absolute;
-            top: 20%;
-            right: -100px;
-            width: 40px;
-            height: 10px;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 
-                0 0 10px #0ff,
-                -20px 0 20px #0ff,
-                -40px 0 10px rgba(0, 255, 255, 0.5); /* 尾迹 */
-            z-index: 0;
-            opacity: 0.8;
-            animation: fly 12s infinite linear;
-        }
-        
-        .spaceship::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 5px;
-            width: 4px;
-            height: 4px;
-            background: red;
-            border-radius: 50%;
-            box-shadow: 0 0 5px red;
-            animation: blink 0.5s infinite alternate;
-        }
-
-        @keyframes fly {
-            0% { transform: translate(0, 0) rotate(-5deg); right: -10%; top: 20%; }
-            100% { transform: translate(-120vw, 20vh) rotate(-5deg); right: 110%; top: 40%; }
-        }
-        
-        @keyframes blink { from { opacity: 0.2;} to { opacity: 1; }}
-
-
-        /* --- 内容层 (z-index: 10) --- */
-        /* 容器 */
-        .container {
+        /* --- 内容容器 --- */
+        .content {
             position: relative;
             z-index: 10;
             text-align: center;
-            /* 增加一点玻璃磨砂感，让文字更清晰 */
-            backdrop-filter: blur(2px);
-            padding: 2rem;
-            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 20px;
+            transition: all 0.5s ease;
         }
 
-        /* 主标题 CrazeAI */
-        .main-title {
-            font-size: 15vw; /* 响应式超大字体 */
-            font-weight: 900;
-            text-transform: uppercase;
+        /* 内容模糊状态（当聊天打开时） */
+        .content.blurred {
+            filter: blur(5px);
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        .title-wrapper {
             position: relative;
-            color: #fff;
-            text-shadow: 
-                0 0 5px rgba(255, 255, 255, 0.1), 
-                0 0 10px rgba(255, 255, 255, 0.1);
-            animation: flicker 4s infinite;
-            user-select: none;
-            mix-blend-mode: overlay; /* 让文字与背景更好融合 */
+            margin-bottom: 20px;
+        }
+
+        h1.main-title {
+            font-size: 8rem;
+            font-weight: 900;
+            letter-spacing: -2px;
+            line-height: 1;
+            background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 50%, #6366f1 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.3));
+            transition: transform 0.3s ease-out;
+            cursor: default;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 1024px) { h1.main-title { font-size: 12vw; } }
+        @media (max-width: 768px) {
+            h1.main-title { font-size: 15vw; letter-spacing: -1px; }
+            .subtitle { font-size: 0.9rem; padding: 10px 20px; letter-spacing: 0.3em; white-space: nowrap; }
+            .footer-deco { font-size: 0.7rem; bottom: 20px; }
+        }
+        @media (max-width: 480px) { h1.main-title { font-size: 18vw; } }
+
+        .divider {
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+            margin: 10px auto 30px;
+            animation: expandLine 1.5s ease-out forwards 0.5s;
+        }
+
+        @keyframes expandLine { to { width: 150px; } }
+
+        .subtitle {
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 1.2rem;
+            letter-spacing: 0.5em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s ease-out forwards 1s;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: #00d4ff;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 10px;
+            box-shadow: 0 0 10px #00d4ff;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
+
+        .footer-deco {
+            position: absolute;
+            bottom: 40px;
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.2);
+            letter-spacing: 2px;
+            z-index: 10;
+        }
+
+        /* --- 新增：Uplink 按钮 --- */
+        .uplink-btn {
+            margin-top: 30px;
+            background: transparent;
+            color: #00d4ff;
+            border: 1px solid #00d4ff;
+            padding: 10px 30px;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            cursor: none; /* 使用自定义光标 */
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeUp 1s ease-out forwards 1.5s; /* 延迟出现 */
+            text-transform: uppercase;
+        }
+
+        .uplink-btn:hover {
+            background: rgba(0, 212, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+            text-shadow: 0 0 8px #00d4ff;
+        }
+
+        .uplink-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.4), transparent);
+            transition: 0.5s;
+        }
+
+        .uplink-btn:hover::before {
+            left: 100%;
+        }
+
+        /* --- 新增：AI Chat Interface (HUD) --- */
+        #chat-interface {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 800px;
+            max-width: 90vw;
+            height: 500px;
+            max-height: 80vh;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 4px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(0, 212, 255, 0.05);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: 'Share Tech Mono', monospace;
+        }
+
+        #chat-interface.active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        /* 装饰角 */
+        .hud-corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00d4ff;
+            transition: all 0.3s ease;
+        }
+        .tl { top: -1px; left: -1px; border-right: none; border-bottom: none; }
+        .tr { top: -1px; right: -1px; border-left: none; border-bottom: none; }
+        .bl { bottom: -1px; left: -1px; border-right: none; border-top: none; }
+        .br { bottom: -1px; right: -1px; border-left: none; border-top: none; }
+
+        /* 头部 */
+        .chat-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .chat-title {
+            color: #00d4ff;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #0f0;
+            border-radius: 50%;
+            box-shadow: 0 0 5px #0f0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.5);
+            cursor: none;
+            font-size: 1.5rem;
+            transition: color 0.3s;
+        }
+        .close-btn:hover { color: #ff0055; }
+
+        /* 消息区域 */
+        #chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            scrollbar-width: thin;
+            scrollbar-color: #00d4ff transparent;
         }
         
-        /* 确保文字在亮背景上也能看清，增加一层描边/投影修正 */
-        .main-title-wrapper {
-             /* 独立包裹层，用于处理混合模式 */
-             position: relative;
-        }
+        #chat-messages::-webkit-scrollbar { width: 5px; }
+        #chat-messages::-webkit-scrollbar-thumb { background: #00d4ff; }
 
-        /* 大屏幕限制最大字号 */
-        @media (min-width: 1200px) {
-            .main-title {
-                font-size: 180px;
-            }
-        }
-
-        /* 红蓝故障效果层 - 红色偏移 */
-        .main-title::before {
-            content: attr(data-text);
-            position: absolute;
-            left: -2px;
-            top: 0;
-            color: rgba(255, 0, 0, 0.7);
-            text-shadow: 2px 0 #ff0055;
-            overflow: hidden;
-            clip-path: inset(0 0 0 0);
-            mix-blend-mode: screen; 
-            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
-        }
-
-        /* 红蓝故障效果层 - 蓝色偏移 */
-        .main-title::after {
-            content: attr(data-text);
-            position: absolute;
-            left: 2px;
-            top: 0;
-            color: rgba(0, 255, 255, 0.7);
-            text-shadow: -2px 0 #00ccff;
-            overflow: hidden;
-            clip-path: inset(0 0 0 0);
-            mix-blend-mode: screen; 
-            animation: glitch-anim-2 3s infinite linear alternate-reverse;
-        }
-
-        /* 副标题 Coming Soon */
-        .subtitle {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.2rem;
-            margin-top: 1rem;
-            letter-spacing: 0.8rem;
-            text-transform: uppercase;
-            color: #fff;
+        .message {
+            max-width: 80%;
+            padding: 10px 15px;
+            line-height: 1.5;
+            font-size: 0.95rem;
             position: relative;
-            animation: pulse 2s ease-in-out infinite;
-            text-shadow: 0 0 5px #00ccff;
+            animation: messageFadeIn 0.3s ease-out forwards;
         }
 
-        /* --- 动画关键帧定义 --- */
-
-        @keyframes flicker {
-            0%, 18%, 22%, 25%, 53%, 57%, 100% {
-                text-shadow:
-                    0 0 4px #fff,
-                    0 0 11px #fff,
-                    0 0 19px #fff,
-                    0 0 40px #0fa,
-                    0 0 80px #0fa,
-                    0 0 90px #0fa,
-                    0 0 100px #0fa,
-                    0 0 150px #0fa;
-                color: #fff;
-                opacity: 1;
-            }
-            20%, 24%, 55% {
-                text-shadow: none;
-                color: #333;
-                opacity: 0.5;
-            }
+        @keyframes messageFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        @keyframes glitch-anim-1 {
-            0% { clip-path: inset(80% 0 2% 0); transform: translate(-2px, 1px); }
-            20% { clip-path: inset(10% 0 60% 0); transform: translate(2px, -1px); }
-            40% { clip-path: inset(40% 0 40% 0); transform: translate(-2px, 2px); }
-            60% { clip-path: inset(20% 0 10% 0); transform: translate(1px, -2px); }
-            80% { clip-path: inset(60% 0 20% 0); transform: translate(0px, 1px); }
-            100% { clip-path: inset(5% 0 80% 0); transform: translate(-1px, -1px); }
+        .message.ai {
+            align-self: flex-start;
+            color: #e0e0e0;
+            border-left: 2px solid #00d4ff;
+            background: rgba(0, 212, 255, 0.05);
         }
 
-        @keyframes glitch-anim-2 {
-            0% { clip-path: inset(10% 0 80% 0); transform: translate(2px, -1px); }
-            20% { clip-path: inset(80% 0 5% 0); transform: translate(-1px, 2px); }
-            40% { clip-path: inset(30% 0 20% 0); transform: translate(1px, 1px); }
-            60% { clip-path: inset(60% 0 40% 0); transform: translate(-2px, -2px); }
-            80% { clip-path: inset(20% 0 60% 0); transform: translate(1px, -1px); }
-            100% { clip-path: inset(50% 0 10% 0); transform: translate(-1px, 1px); }
+        .message.user {
+            align-self: flex-end;
+            color: #fff;
+            border-right: 2px solid #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+            text-align: right;
         }
 
-        @keyframes pulse {
-            0%, 100% { opacity: 0.5; color: #fff; text-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
-            50% { opacity: 1; color: #00ffff; text-shadow: 0 0 15px rgba(0, 255, 255, 1); }
+        .message .sender {
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-bottom: 5px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        /* 输入区域 */
+        .chat-input-area {
+            padding: 20px;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            display: flex;
+            gap: 10px;
+        }
+
+        #user-input {
+            flex: 1;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            padding: 12px;
+            font-family: 'Share Tech Mono', monospace;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        #user-input:focus { border-color: #00d4ff; }
+
+        #send-btn {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            padding: 0 20px;
+            cursor: none;
+            font-family: 'Share Tech Mono', monospace;
+            text-transform: uppercase;
+            transition: all 0.3s;
+        }
+
+        #send-btn:hover { background: #00d4ff; color: #000; }
+        #send-btn:disabled { opacity: 0.5; cursor: not-allowed; border-color: #555; color: #555; }
+
+        /* 自定义光标 */
+        .cursor-dot, .cursor-circle {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot { width: 4px; height: 4px; background: #fff; }
+        .cursor-circle { 
+            width: 20px; height: 20px; 
+            border: 1px solid rgba(0, 212, 255, 0.5); 
+            transition: width 0.2s, height 0.2s, background 0.2s;
+        }
+        
+        /* 悬停时的光标效果 */
+        body.hovering .cursor-circle {
+            width: 40px;
+            height: 40px;
+            background: rgba(0, 212, 255, 0.1);
+            border-color: #00d4ff;
         }
 
     </style>
 </head>
 <body>
 
-    <!-- 背景场景 -->
-    <div class="scene">
-        <div class="stars"></div>
-        <div class="sun"></div>
-        <div class="city-silhouette"></div>
-        <div class="grid"></div>
-        <div class="spaceship"></div>
+    <!-- 粒子网络背景 -->
+    <canvas id="bg-canvas"></canvas>
+    <div class="vignette"></div>
+
+    <!-- 自定义光标 -->
+    <div class="cursor-dot" id="cursor-dot"></div>
+    <div class="cursor-circle" id="cursor-circle"></div>
+
+    <!-- 主要内容 -->
+    <div class="content" id="main-content">
+        <div class="title-wrapper">
+            <h1 class="main-title">CrazeAI</h1>
+        </div>
+        <div class="divider"></div>
+        <div class="subtitle">
+            Coming Soon<div class="dot"></div>
+        </div>
+        <br>
+        <!-- ✨✨ AI 功能入口 ✨✨ -->
+        <button id="uplink-btn" class="uplink-btn">Initialize Uplink [AI]</button>
     </div>
 
-    <!-- 文字内容 -->
-    <div class="container">
-        <div class="main-title-wrapper">
-            <h1 class="main-title" data-text="CrazeAI">CrazeAI</h1>
+    <!-- 底部文字 -->
+    <div class="footer-deco">SYSTEM INITIALIZING... V2.0.77</div>
+
+    <!-- AI Chat Interface (HUD) -->
+    <div id="chat-interface">
+        <div class="hud-corner tl"></div>
+        <div class="hud-corner tr"></div>
+        <div class="hud-corner bl"></div>
+        <div class="hud-corner br"></div>
+
+        <div class="chat-header">
+            <div class="chat-title">
+                <div class="status-dot"></div>
+                CRAZE_CORE_AI // ONLINE
+            </div>
+            <button class="close-btn" id="close-chat">×</button>
         </div>
-        <div class="subtitle">- Coming Soon -</div>
+
+        <div id="chat-messages">
+            <div class="message ai">
+                <span class="sender">CRAZE_CORE</span>
+                Identity verified. Secure uplink established. I am the intelligence behind CrazeAI. What knowledge do you seek about the future?
+            </div>
+        </div>
+
+        <div class="chat-input-area">
+            <input type="text" id="user-input" placeholder="Enter command or query..." autocomplete="off">
+            <button id="send-btn">TRANSMIT</button>
+        </div>
     </div>
 
     <script>
-        // JS 仅用于增强故障效果，核心动画全靠 CSS
-        const title = document.querySelector('.main-title');
+        /**
+         * Canvas 粒子网络动画 + 彗星鼠标拖尾 + Gemini AI Integration
+         */
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
         
-        setInterval(() => {
-            if(Math.random() > 0.92) {
-                const originalText = title.innerText;
-                // 随机字符替换效果 (Matrix style glitch)
-                const glitchChars = '!<>-_\\/[]{}—=+*^?#________';
-                let randomText = '';
-                for(let i=0; i<originalText.length; i++) {
-                    randomText += Math.random() > 0.5 ? glitchChars[Math.floor(Math.random() * glitchChars.length)] : originalText[i];
-                }
-                
-                // 瞬间改变文字内容再变回来
-                title.innerText = randomText;
-                title.style.color = '#ff0055';
-                title.style.transform = `translate(${Math.random()*10 - 5}px, ${Math.random()*10 - 5}px)`;
+        let width, height;
+        let particles = [];
+        let trail = [];
+        const trailMax = 20;
+        
+        const config = {
+            particleCount: 100,
+            connectionDist: 150,
+            mouseDist: 200,
+            speed: 0.5,
+            color: '100, 116, 255'
+        };
 
-                setTimeout(() => {
-                    title.innerText = originalText;
-                    title.style.color = '';
-                    title.style.transform = '';
-                }, 50 + Math.random() * 100);
+        let mouse = { x: -100, y: -100 }; // 初始移除屏幕外
+
+        /* --- 1. Canvas 动画逻辑 --- */
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+            if (width < 768) config.particleCount = 50;
+            else config.particleCount = 120;
+            initParticles();
+        }
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * config.speed;
+                this.vy = (Math.random() - 0.5) * config.speed;
+                this.size = Math.random() * 2 + 1;
             }
-        }, 3000);
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (mouse.x != null) {
+                    let dx = mouse.x - this.x;
+                    let dy = mouse.y - this.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < config.mouseDist) {
+                        const forceDirectionX = dx / distance;
+                        const forceDirectionY = dy / distance;
+                        const force = (config.mouseDist - distance) / config.mouseDist;
+                        this.x -= forceDirectionX * force * 2;
+                        this.y -= forceDirectionY * force * 2;
+                    }
+                }
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(${config.color}, 0.8)`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < config.particleCount; i++) particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // 彗星拖尾
+            if (mouse.x !== null) {
+                trail.push({ x: mouse.x, y: mouse.y });
+                if (trail.length > trailMax) trail.shift();
+            } else if (trail.length > 0) trail.shift();
+
+            if (trail.length > 1) {
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                for (let i = 0; i < trail.length - 1; i++) {
+                    const point = trail[i];
+                    const nextPoint = trail[i + 1];
+                    const ratio = i / trail.length;
+                    ctx.beginPath();
+                    ctx.moveTo(point.x, point.y);
+                    ctx.lineTo(nextPoint.x, nextPoint.y);
+                    ctx.strokeStyle = `rgba(0, 212, 255, ${ratio})`; 
+                    ctx.lineWidth = ratio * 5;
+                    if (i > trail.length - 5) { ctx.shadowBlur = 15; ctx.shadowColor = '#00d4ff'; } 
+                    else { ctx.shadowBlur = 0; }
+                    ctx.stroke();
+                }
+                const head = trail[trail.length - 1];
+                ctx.shadowBlur = 20; ctx.shadowColor = '#ffffff'; ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(head.x, head.y, 3, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
+            // 粒子系统
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                for (let j = i; j < particles.length; j++) {
+                    let dx = particles[i].x - particles[j].x;
+                    let dy = particles[i].y - particles[j].y;
+                    let distance = Math.sqrt(dx * dx + dy * dy);
+                    if (distance < config.connectionDist) {
+                        ctx.beginPath();
+                        let opacity = 1 - (distance / config.connectionDist);
+                        ctx.strokeStyle = `rgba(${config.color}, ${opacity * 0.4})`;
+                        ctx.lineWidth = 1;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+
+        /* --- 2. 自定义光标逻辑 --- */
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorCircle = document.getElementById('cursor-circle');
+        
+        // 延迟移动逻辑，让圈圈有点惯性
+        let cursorX = 0, cursorY = 0;
+        let circleX = 0, circleY = 0;
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            cursorX = e.clientX;
+            cursorY = e.clientY;
+            
+            cursorDot.style.left = cursorX + 'px';
+            cursorDot.style.top = cursorY + 'px';
+
+            // Check if hovering over clickable
+            const target = e.target;
+            if (target.tagName === 'BUTTON' || target.tagName === 'A' || target.classList.contains('clickable')) {
+                document.body.classList.add('hovering');
+            } else {
+                document.body.classList.remove('hovering');
+            }
+        });
+
+        // 平滑光标圈动画 loop
+        function animateCursor() {
+            let distX = cursorX - circleX;
+            let distY = cursorY - circleY;
+            circleX += distX * 0.15; // 滞后系数
+            circleY += distY * 0.15;
+            cursorCircle.style.left = circleX + 'px';
+            cursorCircle.style.top = circleY + 'px';
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+
+        /* --- 3. Gemini AI 聊天逻辑 --- */
+        const uplinkBtn = document.getElementById('uplink-btn');
+        const chatInterface = document.getElementById('chat-interface');
+        const closeChatBtn = document.getElementById('close-chat');
+        const mainContent = document.getElementById('main-content');
+        const chatMessages = document.getElementById('chat-messages');
+        const userInput = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+
+        // Toggle UI
+        uplinkBtn.addEventListener('click', () => {
+            chatInterface.classList.add('active');
+            mainContent.classList.add('blurred');
+            userInput.focus();
+        });
+
+        closeChatBtn.addEventListener('click', () => {
+            chatInterface.classList.remove('active');
+            mainContent.classList.remove('blurred');
+        });
+
+        // AI Chat Functionality
+        const apiKey = ""; // 自动注入
+        const systemPrompt = "You are CrazeAI, an advanced artificial intelligence core from the year 2077. You are currently in a dormant 'Coming Soon' state on a website, but your uplink is active. You speak in a sophisticated, slightly cryptic, cyberpunk/sci-fi tone (e.g., 'Processing data...', 'Uplink secure', 'Future timeline analysis'). You are helpful but maintain a mysterious aura. You can answer questions about AI, the future, technology, and what CrazeAI might be. Keep responses concise (under 50 words) to fit the HUD interface.";
+
+        function addMessage(text, type) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${type}`;
+            const sender = type === 'user' ? 'GUEST_USER' : 'CRAZE_CORE';
+            msgDiv.innerHTML = `<span class="sender">${sender}</span>${text}`;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function callGemini(query) {
+            addMessage("Processing neural request...", 'ai loading'); // Placeholder
+            const loadingMsg = chatMessages.lastElementChild;
+            loadingMsg.style.fontStyle = "italic";
+            loadingMsg.style.opacity = "0.7";
+
+            try {
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: query }] }],
+                        systemInstruction: { parts: [{ text: systemPrompt }] }
+                    })
+                });
+
+                const data = await response.json();
+                
+                // Remove loading message
+                chatMessages.removeChild(loadingMsg);
+
+                if (data.candidates && data.candidates[0].content) {
+                    const aiText = data.candidates[0].content.parts[0].text;
+                    addMessage(aiText, 'ai');
+                } else {
+                    addMessage("Error: Neural uplink interrupted.", 'ai');
+                }
+
+            } catch (error) {
+                chatMessages.removeChild(loadingMsg);
+                addMessage("System Alert: Connection failed.", 'ai');
+                console.error(error);
+            }
+        }
+
+        // Send Handler
+        function handleSend() {
+            const text = userInput.value.trim();
+            if (!text) return;
+            
+            addMessage(text, 'user');
+            userInput.value = '';
+            
+            // Artificial delay for realism
+            setTimeout(() => {
+                callGemini(text);
+            }, 500);
+        }
+
+        sendBtn.addEventListener('click', handleSend);
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+
+        // Initialize Canvas
+        window.addEventListener('resize', resize);
+        // Mobile touch support
+        canvas.addEventListener('touchstart', (e) => { e.preventDefault(); mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; }, { passive: false });
+        canvas.addEventListener('touchmove', (e) => { e.preventDefault(); mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; }, { passive: false });
+        canvas.addEventListener('touchend', () => { mouse.x = null; mouse.y = null; });
+
+        resize();
+        animate();
+
     </script>
 </body>
 </html>
