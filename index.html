@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrazeAI - Coming Soon</title>
+    <!-- 引入极具科技感的字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@900&family=Rajdhani:wght@300&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 全局重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #0b0c15; /* 深蓝紫色背景 */
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Orbitron', sans-serif;
+            overflow: hidden;
+            color: #ffffff;
+            position: relative;
+        }
+
+        /* --- 背景场景层 (z-index: 0) --- */
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+            perspective: 1000px; /* 3D 透视 */
+            background: linear-gradient(to bottom, #020205 0%, #100b29 100%);
+        }
+
+        /* 1. 星空 */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)),
+                radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            opacity: 0.6;
+            animation: twinkle 5s infinite linear;
+        }
+
+        @keyframes twinkle {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-200px); }
+        }
+
+        /* 2. 赛博星球 (合成波落日) */
+        .sun {
+            position: absolute;
+            bottom: 30%; /* 位于地平线上方 */
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40vh;
+            height: 40vh;
+            border-radius: 50%;
+            background: linear-gradient(to bottom, #ff0055, #ffcc00);
+            box-shadow: 0 0 60px rgba(255, 0, 85, 0.6);
+            /* 制作横条纹遮罩效果 */
+            -webkit-mask-image: linear-gradient(to bottom, 
+                black 0%, black 50%, 
+                transparent 50%, transparent 55%, 
+                black 55%, black 60%, 
+                transparent 60%, transparent 63%, 
+                black 63%, black 68%, 
+                transparent 68%, transparent 70%, 
+                black 70%, black 100%);
+            mask-image: linear-gradient(to bottom, 
+                black 0%, black 50%, 
+                transparent 50%, transparent 55%, 
+                black 55%, black 60%, 
+                transparent 60%, transparent 63%, 
+                black 63%, black 68%, 
+                transparent 68%, transparent 70%, 
+                black 70%, black 100%);
+        }
+
+        /* 3. 远处的城市剪影 */
+        .city-silhouette {
+            position: absolute;
+            bottom: 35%; /* 放在地平线上 */
+            left: 0;
+            width: 100%;
+            height: 10vh;
+            background-repeat: repeat-x;
+            background-position: bottom;
+            background-size: 15% 100%;
+            /* 使用纯 CSS 渐变模拟高低错落的大楼 */
+            background-image: linear-gradient(to top, #000 0%, #000 80%, transparent 80%),
+                              linear-gradient(to top, #050505 0%, #050505 60%, transparent 60%),
+                              linear-gradient(to top, #020202 0%, #020202 90%, transparent 90%),
+                              linear-gradient(to top, #000 0%, #000 40%, transparent 40%);
+            z-index: 1;
+            filter: drop-shadow(0 -2px 5px rgba(0, 204, 255, 0.3));
+            opacity: 0.9;
+        }
+        
+        /* 增加第二层城市增加层次感 */
+        .city-silhouette::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: -50px;
+            width: 110%;
+            height: 80%;
+            background-repeat: repeat-x;
+            background-size: 10% 100%;
+            background-image: linear-gradient(to top, #000 0%, #000 70%, transparent 70%),
+                              linear-gradient(to top, #000 0%, #000 50%, transparent 50%);
+            opacity: 0.7;
+        }
+
+        /* 4. 地面网格 (赛博空间) */
+        .grid {
+            position: absolute;
+            bottom: -30%;
+            left: -50%;
+            width: 200%;
+            height: 80%;
+            background: 
+                linear-gradient(transparent 0%, rgba(0, 255, 255, 0.4) 2%, transparent 3%),
+                linear-gradient(90deg, transparent 0%, rgba(255, 0, 128, 0.3) 2%, transparent 3%);
+            background-size: 40px 40px;
+            transform: rotateX(60deg);
+            animation: gridMove 2s infinite linear;
+            box-shadow: 0 -20px 40px rgba(0,0,0,1) inset; /* 远处的渐隐 */
+            z-index: 2;
+        }
+
+        @keyframes gridMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 40px; }
+        }
+
+        /* 5. 飞船 */
+        .spaceship {
+            position: absolute;
+            top: 20%;
+            right: -100px;
+            width: 40px;
+            height: 10px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 
+                0 0 10px #0ff,
+                -20px 0 20px #0ff,
+                -40px 0 10px rgba(0, 255, 255, 0.5); /* 尾迹 */
+            z-index: 0;
+            opacity: 0.8;
+            animation: fly 12s infinite linear;
+        }
+        
+        .spaceship::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5px;
+            width: 4px;
+            height: 4px;
+            background: red;
+            border-radius: 50%;
+            box-shadow: 0 0 5px red;
+            animation: blink 0.5s infinite alternate;
+        }
+
+        @keyframes fly {
+            0% { transform: translate(0, 0) rotate(-5deg); right: -10%; top: 20%; }
+            100% { transform: translate(-120vw, 20vh) rotate(-5deg); right: 110%; top: 40%; }
+        }
+        
+        @keyframes blink { from { opacity: 0.2;} to { opacity: 1; }}
+
+
+        /* --- 内容层 (z-index: 10) --- */
+        /* 容器 */
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            /* 增加一点玻璃磨砂感，让文字更清晰 */
+            backdrop-filter: blur(2px);
+            padding: 2rem;
+            border-radius: 20px;
+        }
+
+        /* 主标题 CrazeAI */
+        .main-title {
+            font-size: 15vw; /* 响应式超大字体 */
+            font-weight: 900;
+            text-transform: uppercase;
+            position: relative;
+            color: #fff;
+            text-shadow: 
+                0 0 5px rgba(255, 255, 255, 0.1), 
+                0 0 10px rgba(255, 255, 255, 0.1);
+            animation: flicker 4s infinite;
+            user-select: none;
+            mix-blend-mode: overlay; /* 让文字与背景更好融合 */
+        }
+        
+        /* 确保文字在亮背景上也能看清，增加一层描边/投影修正 */
+        .main-title-wrapper {
+             /* 独立包裹层，用于处理混合模式 */
+             position: relative;
+        }
+
+        /* 大屏幕限制最大字号 */
+        @media (min-width: 1200px) {
+            .main-title {
+                font-size: 180px;
+            }
+        }
+
+        /* 红蓝故障效果层 - 红色偏移 */
+        .main-title::before {
+            content: attr(data-text);
+            position: absolute;
+            left: -2px;
+            top: 0;
+            color: rgba(255, 0, 0, 0.7);
+            text-shadow: 2px 0 #ff0055;
+            overflow: hidden;
+            clip-path: inset(0 0 0 0);
+            mix-blend-mode: screen; 
+            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
+        }
+
+        /* 红蓝故障效果层 - 蓝色偏移 */
+        .main-title::after {
+            content: attr(data-text);
+            position: absolute;
+            left: 2px;
+            top: 0;
+            color: rgba(0, 255, 255, 0.7);
+            text-shadow: -2px 0 #00ccff;
+            overflow: hidden;
+            clip-path: inset(0 0 0 0);
+            mix-blend-mode: screen; 
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        /* 副标题 Coming Soon */
+        .subtitle {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            letter-spacing: 0.8rem;
+            text-transform: uppercase;
+            color: #fff;
+            position: relative;
+            animation: pulse 2s ease-in-out infinite;
+            text-shadow: 0 0 5px #00ccff;
+        }
+
+        /* --- 动画关键帧定义 --- */
+
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                text-shadow:
+                    0 0 4px #fff,
+                    0 0 11px #fff,
+                    0 0 19px #fff,
+                    0 0 40px #0fa,
+                    0 0 80px #0fa,
+                    0 0 90px #0fa,
+                    0 0 100px #0fa,
+                    0 0 150px #0fa;
+                color: #fff;
+                opacity: 1;
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+                color: #333;
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(80% 0 2% 0); transform: translate(-2px, 1px); }
+            20% { clip-path: inset(10% 0 60% 0); transform: translate(2px, -1px); }
+            40% { clip-path: inset(40% 0 40% 0); transform: translate(-2px, 2px); }
+            60% { clip-path: inset(20% 0 10% 0); transform: translate(1px, -2px); }
+            80% { clip-path: inset(60% 0 20% 0); transform: translate(0px, 1px); }
+            100% { clip-path: inset(5% 0 80% 0); transform: translate(-1px, -1px); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(10% 0 80% 0); transform: translate(2px, -1px); }
+            20% { clip-path: inset(80% 0 5% 0); transform: translate(-1px, 2px); }
+            40% { clip-path: inset(30% 0 20% 0); transform: translate(1px, 1px); }
+            60% { clip-path: inset(60% 0 40% 0); transform: translate(-2px, -2px); }
+            80% { clip-path: inset(20% 0 60% 0); transform: translate(1px, -1px); }
+            100% { clip-path: inset(50% 0 10% 0); transform: translate(-1px, 1px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; color: #fff; text-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
+            50% { opacity: 1; color: #00ffff; text-shadow: 0 0 15px rgba(0, 255, 255, 1); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- 背景场景 -->
+    <div class="scene">
+        <div class="stars"></div>
+        <div class="sun"></div>
+        <div class="city-silhouette"></div>
+        <div class="grid"></div>
+        <div class="spaceship"></div>
+    </div>
+
+    <!-- 文字内容 -->
+    <div class="container">
+        <div class="main-title-wrapper">
+            <h1 class="main-title" data-text="CrazeAI">CrazeAI</h1>
+        </div>
+        <div class="subtitle">- Coming Soon -</div>
+    </div>
+
+    <script>
+        // JS 仅用于增强故障效果，核心动画全靠 CSS
+        const title = document.querySelector('.main-title');
+        
+        setInterval(() => {
+            if(Math.random() > 0.92) {
+                const originalText = title.innerText;
+                // 随机字符替换效果 (Matrix style glitch)
+                const glitchChars = '!<>-_\\/[]{}—=+*^?#________';
+                let randomText = '';
+                for(let i=0; i<originalText.length; i++) {
+                    randomText += Math.random() > 0.5 ? glitchChars[Math.floor(Math.random() * glitchChars.length)] : originalText[i];
+                }
+                
+                // 瞬间改变文字内容再变回来
+                title.innerText = randomText;
+                title.style.color = '#ff0055';
+                title.style.transform = `translate(${Math.random()*10 - 5}px, ${Math.random()*10 - 5}px)`;
+
+                setTimeout(() => {
+                    title.innerText = originalText;
+                    title.style.color = '';
+                    title.style.transform = '';
+                }, 50 + Math.random() * 100);
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
